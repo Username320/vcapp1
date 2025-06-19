@@ -25,16 +25,35 @@ document.addEventListener('DOMContentLoaded', function() {
         todos.forEach((todo, idx) => {
             let text = '';
             let date = '';
+            let done = false;
             if (typeof todo === 'object' && todo !== null && 'text' in todo && 'date' in todo) {
                 text = todo.text;
                 date = todo.date;
+                done = !!todo.done;
             } else if (typeof todo === 'string') {
                 text = todo;
                 date = '';
+                done = false;
             }
             const li = document.createElement('li');
+
+            // Чекбокс выполнения
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = done;
+            checkbox.style.marginRight = '8px';
+            checkbox.addEventListener('change', function() {
+                todos[idx].done = checkbox.checked;
+                saveTodos();
+                renderTodos();
+            });
+
             const content = document.createElement('span');
             content.textContent = text + (date ? ' — ' + date : '');
+            if (done) {
+                content.style.textDecoration = 'line-through';
+                content.style.opacity = '0.6';
+            }
 
             // Кнопка редактирования
             const editBtn = document.createElement('button');
@@ -73,6 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 renderTodos();
             });
 
+            li.appendChild(checkbox);
             li.appendChild(content);
             li.appendChild(editBtn);
             li.appendChild(btn);
@@ -93,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 day: '2-digit', month: '2-digit', year: 'numeric',
                 hour: '2-digit', minute: '2-digit'
             });
-            todos.push({ text: value, date: dateStr });
+            todos.push({ text: value, date: dateStr, done: false });
             saveTodos();
             renderTodos();
             input.value = '';
@@ -102,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Миграция старого формата (если есть)
     if (todos.length && typeof todos[0] === 'string') {
-        todos = todos.map(t => ({ text: t, date: new Date().toLocaleString('ru-RU') }));
+        todos = todos.map(t => ({ text: t, date: new Date().toLocaleString('ru-RU'), done: false }));
         saveTodos();
     }
 
