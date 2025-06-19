@@ -5,15 +5,36 @@ document.addEventListener('DOMContentLoaded', function() {
     const input = document.getElementById('todo-input');
     const list = document.getElementById('todo-list');
 
-    // Загрузка задач из localStorage
-    let todos = JSON.parse(localStorage.getItem('todos')) || [];
+    // Безопасная загрузка задач из localStorage
+    let todos = [];
+    try {
+        const raw = localStorage.getItem('todos');
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) {
+                todos = parsed;
+            }
+        }
+    } catch (e) {
+        console.error('Ошибка чтения задач из localStorage:', e);
+        todos = [];
+    }
 
     function renderTodos() {
         list.innerHTML = '';
         todos.forEach((todo, idx) => {
+            let text = '';
+            let date = '';
+            if (typeof todo === 'object' && todo !== null && 'text' in todo && 'date' in todo) {
+                text = todo.text;
+                date = todo.date;
+            } else if (typeof todo === 'string') {
+                text = todo;
+                date = '';
+            }
             const li = document.createElement('li');
             const content = document.createElement('span');
-            content.textContent = todo.text + ' — ' + todo.date;
+            content.textContent = text + (date ? ' — ' + date : '');
             const btn = document.createElement('button');
             btn.textContent = 'Удалить';
             btn.addEventListener('click', function() {
