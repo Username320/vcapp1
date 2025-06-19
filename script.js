@@ -35,14 +35,46 @@ document.addEventListener('DOMContentLoaded', function() {
             const li = document.createElement('li');
             const content = document.createElement('span');
             content.textContent = text + (date ? ' — ' + date : '');
+
+            // Кнопка редактирования
+            const editBtn = document.createElement('button');
+            editBtn.innerHTML = '<i class="fa-solid fa-pen"></i>';
+            editBtn.setAttribute('aria-label', 'Редактировать');
+            editBtn.style.marginRight = '8px';
+            editBtn.addEventListener('click', function() {
+                // Показываем поле для редактирования
+                const editInput = document.createElement('input');
+                editInput.type = 'text';
+                editInput.value = text;
+                editInput.style.marginRight = '8px';
+                const saveBtn = document.createElement('button');
+                saveBtn.textContent = 'Сохранить';
+                saveBtn.addEventListener('click', function() {
+                    const newText = editInput.value.trim();
+                    if (newText) {
+                        todos[idx].text = newText;
+                        saveTodos();
+                        renderTodos();
+                    }
+                });
+                // Очищаем li и добавляем элементы для редактирования
+                li.innerHTML = '';
+                li.appendChild(editInput);
+                li.appendChild(saveBtn);
+            });
+
+            // Кнопка удаления
             const btn = document.createElement('button');
-            btn.textContent = 'Удалить';
+            btn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+            btn.setAttribute('aria-label', 'Удалить');
             btn.addEventListener('click', function() {
                 todos.splice(idx, 1);
                 saveTodos();
                 renderTodos();
             });
+
             li.appendChild(content);
+            li.appendChild(editBtn);
             li.appendChild(btn);
             list.appendChild(li);
         });
