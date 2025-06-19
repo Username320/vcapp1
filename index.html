@@ -11,7 +11,14 @@
         <h1>Добро пожаловать на сайт!</h1>
     </header>
     <main>
-        <p>Это стартовая страница вашего сайта.</p>
+        <section class="todo">
+            <h2>ToDo List</h2>
+            <form id="todo-form">
+                <input type="text" id="todo-input" placeholder="Введите задачу..." required>
+                <button type="submit">Добавить</button>
+            </form>
+            <ul id="todo-list"></ul>
+        </section>
     </main>
     <footer>
         <p>&copy; 2024 Ваш сайт</p>
